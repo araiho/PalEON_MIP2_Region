@@ -1,2 +1,5 @@
 phase2_model_output/
 phase2_cleaned_ouput/
+.history
+
+.Rhistory
