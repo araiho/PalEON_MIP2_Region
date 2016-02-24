@@ -483,7 +483,7 @@ mean(wsl.TotLivBiom$TotLivBiom, na.rm=T)
 # Doing Biome Classifications
 ggplot(data=wsl.TotLivBiom[wsl.TotLivBiom$Year %in% c(850, 1850, 2000),]) +
   facet_grid(Year~.) +
-  geom_raster(aes(x=lon, y=lat, fill=TotLivBiom.yr)) +
+  geom_raster(aes(x=lon, y=lat, fill=TotLivBiom)) +
   scale_y_continuous(name="Latitude", expand=c(0,0)) +
   scale_x_continuous(name="Longitude", expand=c(0,0)) +
   ggtitle("LPJ-wsl") +
@@ -496,15 +496,13 @@ ggplot(data=wsl.TotLivBiom[wsl.TotLivBiom$Year %in% c(850, 1850, 2000),]) +
 wsl.TotLivBiom$Model   <- as.factor("LPJ-WSL")
 guess.TotLivBiom$Model <- as.factor("LPJ-GUESS")
 
-guess.TotLivBiom <- guess.TotLivBiom[,c("lat", "lon", "Year", "TotLivBiom", "TotLivBiom.yr", "Model")]
-
 TotLivBiom <- rbind(guess.TotLivBiom, wsl.TotLivBiom)
 
 png(file.path(path.figs, "TotLivBiom_0850_1850_2000.png"), height=8.5, width=11, units="in", res=180)
 ggplot(data=TotLivBiom[TotLivBiom$Year %in% c(850, 1850, 2000),]) +
   facet_grid(Year~Model) +
-  geom_raster(aes(x=lon, y=lat, fill=TotLivBiom.yr)) +
-  scale_fill_gradient2(low="green3", mid="gray10", high="red3") +
+  geom_raster(aes(x=lon, y=lat, fill=TotLivBiom)) +
+  scale_fill_gradientn(colors=c("black", "green3")) +
   scale_y_continuous(name="Latitude", expand=c(0,0)) +
   scale_x_continuous(name="Longitude", expand=c(0,0)) +
   coord_equal(ratio=1)
