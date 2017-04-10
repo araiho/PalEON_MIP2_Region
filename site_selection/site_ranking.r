@@ -69,7 +69,7 @@ mod_coords$done[grep('ERROR',mod_coords$spininital)] <- "ERROR"
 
 sites_dat$bc_binned = cut(stepps_dat$bc,
                           breaks=3,
-                          labels=FALSE)
+                          labels=FALSE) # this is sorted low medium high bre-curtis distance to show where the biggest changes occured in the STEPPS2 data product
 
 sites_dat$d2_binned = cut(sites_dat$second_deriv1000,
                           breaks=3,
@@ -94,7 +94,7 @@ p <- p + scale_colour_manual(values=c('#fed976', '#fd8d3c', '#800026'))
 p <- p + geom_point(data=tr_coords, aes(x=longitude, y=latitude), shape=8, colour='black')
 p <- p + theme_bw()
 print(p)
-ggsave('figures/paleon_sites_stepps_change.pdf')
+ggsave('figures/paleon_sites_stepps_change.pdf')+coord_equal()
 dev.off()
 
 
@@ -107,7 +107,7 @@ p <- p + scale_colour_manual(values=c('#fed976', '#fd8d3c', '#800026'))
 p <- p + geom_point(data=tr_coords, aes(x=longitude, y=latitude), shape=8, colour='black')
 p <- p + theme_bw()
 print(p)
-ggsave('figures/paleon_sites_refab_change.pdf')
+ggsave('figures/paleon_sites_refab_change.pdf')+coord_equal()
 dev.off()
 
 #### Plot Ed runs completed v. not completed
@@ -129,11 +129,11 @@ q <- ggplot() +  geom_path(data=us.fort, aes(x=long, y=lat, group=group),  colou
   geom_point(data=tr_coords, aes(x=longitude, y=latitude), colour='black', shape=8) + 
   geom_point(data=mod_coords[1:6,], aes(x=lon, y=lat), colour='blue', shape=19,cex=3) +
   geom_point(data=sites_dat, aes(x=long, y=lat, colour=factor(bc_binned)), alpha=0.7) + 
-  scale_colour_manual(values=c('#fed976', '#fd8d3c', '#800026')) +
+  scale_colour_manual(values=c('#fed976', '#fd8d3c', '#800026'),name='BreCurtisFactor') +
   theme_bw()
 print(q)
-ggsave('figures/paleon_sites_ed_grid.pdf')
-ggsave('figures/paleon_sites_ed_grid.png')
+ggsave('figures/paleon_sites_ed_grid.pdf')+coord_equal()
+ggsave('figures/paleon_sites_ed_grid.png')+coord_equal()
 dev.off()
 
 #### Plot STEPPS and Tree Ring data with Ed Runs
@@ -147,10 +147,10 @@ q <- ggplot() +  geom_path(data=us.fort, aes(x=long, y=lat, group=group),  colou
   geom_point(data=tr_coords, aes(x=longitude, y=latitude), colour='black', shape=8) + 
   geom_point(data=mod_coords[1:6,], aes(x=lon, y=lat), colour='blue', shape=19,cex=3) +
   geom_point(data=sites_dat, aes(x=long, y=lat, colour=factor(bc_binned)), alpha=0.7) +
-  p <- p + scale_colour_manual(values=c('#fed976', '#fd8d3c', '#800026'))
+  p <- p + scale_colour_manual(values=c('#fed976', '#fd8d3c', '#800026'),name='BreCurtisFactor')
   theme_bw()
 print(q)
-ggsave('paleon_sites_ed_grid_zoom.pdf')
+ggsave('paleon_sites_ed_grid_zoom.pdf')+coord_equal()
 
 #### Save cleaned dataframe
 sites_dat_cleaned = sites_dat[, c('id', 'stat_id', 'sitename', 'lat', 'long', 'x', 'y', 'mag', 'bc', 
