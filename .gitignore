@@ -4,3 +4,7 @@ phase2_cleaned_ouput/
 
 .Rhistory
 EV_Update_2016.05.02/
+.Rproj.user
+
+*.pdf
+*.Rproj
