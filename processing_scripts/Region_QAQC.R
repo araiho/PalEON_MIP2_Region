@@ -8,7 +8,8 @@
 # libraries we're going to be using
 # -----------------------------
 # Set the working directory
-setwd("~/Dropbox/PalEON_CR/PalEON_MIP2_Region")
+# setwd("~/Desktop/Research/PalEON_CR/PalEON_MIP2_Region")
+setwd("~/Dropbox/PalEON_CR/PalEON_MIP2_Region/")
 
 library(ncdf4)
 library(raster)
@@ -18,16 +19,18 @@ library(ggplot2)
 
 # My extraction utility that can be downloaded here: 
 #   https://github.com/PalEON-Project/MIP_Utils/blob/master/Phase2_region/extract_output_region.R 
-source("/Users/crolli/Dropbox/PalEON_CR/MIP_Utils/Phase2_region/extract_output_region.R") # Generalized Script for extraction
-source("/Users/crolli/Dropbox/PalEON_CR/MIP_Utils/Phase2_region/interpolate_model.R") # Script for interpolating ED
+source("~/Dropbox/PalEON_CR/MIP_Utils/Phase2_region/extract_output_region.R") # Generalized Script for extraction
+source("~/Dropbox/PalEON_CR/MIP_Utils/Phase2_region/interpolate_model.R") # Script for interpolating ED
 
 # Set some file paths
 path.figs <- paste0("QAQC_Figs")
 if(! dir.exists(path.figs)) dir.create(path.figs)
 
-path.guess <- "phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1"
-path.wsl   <- "phase2_model_output/LPJ-WSL/LPJ-WSL.v1"
-path.ed    <- "phase2_model_output/ED2/ED2.v1.2016-05-25"
+path.dat <- "~/Desktop/Research/paleon/MIP2_Region/model_output/"
+
+path.guess <- file.path(path.dat, "LPJ-GUESS/LPJ-GUESS.v1.1")
+path.wsl   <- file.path(path.dat, "LPJ-WSL/LPJ-WSL.v1")
+path.ed    <- file.path(path.dat, "ED2/ED2.v1.2017-05-09")
 # -----------------------------
 
 
@@ -37,36 +40,36 @@ path.ed    <- "phase2_model_output/ED2/ED2.v1.2016-05-25"
 {
 npp.wsl <- list()
 npp.wsl[["spinup"]]  <- extract.paleon.site(model="LPJ-WSL", 
-                                            model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                            model.dir=path.wsl, 
                                             vars="NPP", yrmin= 850, yrmax= 869)[["NPP"]]
 npp.wsl[["pre-ind"]] <- extract.paleon.site(model="LPJ-WSL", 
-                                            model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                            model.dir=path.wsl, 
                                             vars="NPP", yrmin=1830, yrmax=1849)[["NPP"]]
 npp.wsl[["modern"]]  <- extract.paleon.site(model="LPJ-WSL", 
-                                            model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                            model.dir=path.wsl, 
                                             vars="NPP", yrmin=1991, yrmax=2010)[["NPP"]]
 
 npp.guess <- list()
 npp.guess[["spinup"]]  <- extract.paleon.site(model="LPJ-GUESS", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                              model.dir=path.guess, 
                                               vars="NPP", yrmin= 850, yrmax= 869)[["NPP"]]
 npp.guess[["pre-ind"]] <- extract.paleon.site(model="LPJ-GUESS", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                              model.dir=path.guess, 
                                               vars="NPP", yrmin=1830, yrmax=1849)[["NPP"]]
 npp.guess[["modern"]]  <- extract.paleon.site(model="LPJ-GUESS", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                              model.dir=path.guess, 
                                               vars="NPP", yrmin=1991, yrmax=2010)[["NPP"]]
 
 
 npp.ed <- list()
 npp.ed[["spinup"]]  <- extract.paleon.site(model="ED2", 
-                                           model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                           model.dir=path.ed, 
                                            vars="NPP", yrmin= 850, yrmax= 869)[["NPP"]]
 npp.ed[["pre-ind"]] <- extract.paleon.site(model="ED2", 
-                                           model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                           model.dir=path.ed, 
                                            vars="NPP", yrmin=1830, yrmax=1849)[["NPP"]]
 npp.ed[["modern"]]  <- extract.paleon.site(model="ED2", 
-                                           model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                           model.dir=path.ed, 
                                            vars="NPP", yrmin=1991, yrmax=2010)[["NPP"]]
 
 # Condensing the different layers down to the means to make graphing easier
@@ -113,13 +116,13 @@ npp.out$flag <- as.factor(npp.out$flag)
 summary(npp.out)
 
 npp.out$NPP.corr <- ifelse(npp.out$Model=="LPJ-GUESS", npp.out$NPP*1/(24*60*60), npp.out$NPP)
-
+npp.out <- npp.out[!is.na(npp.out$NPP),]  
 # The plot
 png(file.path(path.figs, "NPP.png"), height=8.5, width=11, units="in", res=180)
 ggplot(npp.out[complete.cases(npp.out),]) +
   facet_grid(Model ~ Time, drop=T) +
   geom_raster(data=npp.out[is.na(npp.out$flag), ], aes(x=lon, y=lat, fill=NPP.corr)) +
-  geom_raster(data=npp.out[complete.cases(npp.out) & npp.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=NPP.corr), alpha=0.8) +
+  geom_raster(data=npp.out[complete.cases(npp.out) & npp.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=NPP.corr), alpha=0.9) +
   coord_equal(ratio=1) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
@@ -135,36 +138,36 @@ dev.off()
 {
   nee.wsl <- list()
   nee.wsl[["spinup"]]  <- extract.paleon.site(model="LPJ-WSL", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                              model.dir=path.wsl, 
                                               vars="NEE", yrmin= 850, yrmax= 869)[["NEE"]]
   nee.wsl[["pre-ind"]] <- extract.paleon.site(model="LPJ-WSL", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                              model.dir=path.wsl, 
                                               vars="NEE", yrmin=1830, yrmax=1849)[["NEE"]]
   nee.wsl[["modern"]]  <- extract.paleon.site(model="LPJ-WSL", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                              model.dir=path.wsl, 
                                               vars="NEE", yrmin=1991, yrmax=2010)[["NEE"]]
   
   nee.guess <- list()
   nee.guess[["spinup"]]  <- extract.paleon.site(model="LPJ-GUESS", 
-                                                model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                                model.dir=path.guess, 
                                                 vars="NEE", yrmin= 850, yrmax= 869)[["NEE"]]
   nee.guess[["pre-ind"]] <- extract.paleon.site(model="LPJ-GUESS", 
-                                                model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                                model.dir=path.guess, 
                                                 vars="NEE", yrmin=1830, yrmax=1849)[["NEE"]]
   nee.guess[["modern"]]  <- extract.paleon.site(model="LPJ-GUESS", 
-                                                model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                                model.dir=path.guess, 
                                                 vars="NEE", yrmin=1991, yrmax=2010)[["NEE"]]
   
   
   nee.ed <- list()
   nee.ed[["spinup"]]  <- extract.paleon.site(model="ED2", 
-                                             model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                             model.dir=path.ed, 
                                              vars="NEE", yrmin= 850, yrmax= 869)[["NEE"]]
   nee.ed[["pre-ind"]] <- extract.paleon.site(model="ED2", 
-                                             model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                             model.dir=path.ed, 
                                              vars="NEE", yrmin=1830, yrmax=1849)[["NEE"]]
   nee.ed[["modern"]]  <- extract.paleon.site(model="ED2", 
-                                             model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                             model.dir=path.ed, 
                                              vars="NEE", yrmin=1991, yrmax=2010)[["NEE"]]
   
   # Condensing the different layers down to the means to make graphing easier
@@ -211,13 +214,14 @@ dev.off()
   summary(nee.out)
   
   nee.out[,"NEE.corr"] <- ifelse(nee.out$Model=="LPJ-GUESS", nee.out$NEE*1/(24*60*60), nee.out$NEE)
+  nee.out <- nee.out[!is.na(nee.out$NEE),]  
   
   # The plot
   png(file.path(path.figs, "NEE.png"), height=8.5, width=11, units="in", res=180)
   ggplot(nee.out[complete.cases(nee.out),]) +
     facet_grid(Model ~ Time, drop=T) +
     geom_raster(data=nee.out[is.na(nee.out$flag), ], aes(x=lon, y=lat, fill=NEE.corr)) +
-    geom_raster(data=nee.out[complete.cases(nee.out) & nee.out2$flag=="interpolated", ], aes(x=lon, y=lat, fill=NEE.corr), alpha=0.8) +
+    geom_raster(data=nee.out[complete.cases(nee.out) & nee.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=NEE.corr), alpha=0.9) +
     coord_equal(ratio=1) +
     scale_x_continuous(expand=c(0,0)) +
     scale_y_continuous(expand=c(0,0)) +
@@ -234,36 +238,36 @@ dev.off()
 {
 agb.wsl <- list()
 agb.wsl[["spinup"]]  <- extract.paleon.site(model="LPJ-WSL", 
-                                            model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                            model.dir=path.wsl, 
                                             vars="TotLivBiom", yrmin= 850, yrmax= 869)[["TotLivBiom"]]
 agb.wsl[["pre-ind"]] <- extract.paleon.site(model="LPJ-WSL", 
-                                            model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                            model.dir=path.wsl, 
                                             vars="TotLivBiom", yrmin=1830, yrmax=1849)[["TotLivBiom"]]
 agb.wsl[["modern"]]  <- extract.paleon.site(model="LPJ-WSL", 
-                                            model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                            model.dir=path.wsl, 
                                             vars="TotLivBiom", yrmin=1991, yrmax=2010)[["TotLivBiom"]]
 
 agb.guess <- list()
 agb.guess[["spinup"]]  <- extract.paleon.site(model="LPJ-GUESS", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                              model.dir=path.guess, 
                                               vars="AGB", yrmin= 850, yrmax= 869)[["AGB"]][,,,13]
 agb.guess[["pre-ind"]] <- extract.paleon.site(model="LPJ-GUESS", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                              model.dir=path.guess, 
                                               vars="AGB", yrmin=1830, yrmax=1849)[["AGB"]][,,,13]
 agb.guess[["modern"]]  <- extract.paleon.site(model="LPJ-GUESS", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                              model.dir=path.guess, 
                                               vars="AGB", yrmin=1991, yrmax=2010)[["AGB"]][,,,13]
 
 
 agb.ed <- list()
 agb.ed[["spinup"]]  <- extract.paleon.site(model="ED2", 
-                                           model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                           model.dir=path.ed, 
                                            vars="AGB", yrmin= 850, yrmax= 869)[["AGB"]]
 agb.ed[["pre-ind"]] <- extract.paleon.site(model="ED2", 
-                                           model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                           model.dir=path.ed, 
                                            vars="AGB", yrmin=1830, yrmax=1849)[["AGB"]]
 agb.ed[["modern"]]  <- extract.paleon.site(model="ED2", 
-                                           model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                           model.dir=path.ed, 
                                            vars="AGB", yrmin=1991, yrmax=2010)[["AGB"]]
 
 # Condensing the different layers down to the means to make graphing easier
@@ -308,11 +312,13 @@ agb.out <- interp.mod(dat.all=agb.out, mod.missing="ED2", mod.mask="LPJ-WSL", va
 agb.out$flag <- as.factor(agb.out$flag)
 summary(agb.out)
 
+agb.out <- agb.out[!is.na(agb.out$AGB),]
+
 png(file.path(path.figs, "AGB.png"), height=8.5, width=11, units="in", res=180)
 ggplot(agb.out[complete.cases(agb.out),]) +
   facet_grid(Model ~ Time, drop=T) +
   geom_raster(data=agb.out[is.na(agb.out$flag), ], aes(x=lon, y=lat, fill=AGB)) +
-  geom_raster(data=agb.out[complete.cases(agb.out) & agb.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=AGB), alpha=0.6) +
+  geom_raster(data=agb.out[complete.cases(agb.out) & agb.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=AGB), alpha=0.95) +
   coord_equal(ratio=1) +
   scale_x_continuous(expand=c(0,0)) +
   scale_y_continuous(expand=c(0,0)) +
@@ -328,36 +334,36 @@ dev.off()
 {
   fcomp.wsl <- list()
   fcomp.wsl[["spinup"]]  <- extract.paleon.site(model="LPJ-WSL", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                              model.dir=path.wsl, 
                                               vars="Fcomp", yrmin= 850, yrmax= 869)[["Fcomp"]]
   fcomp.wsl[["pre-ind"]] <- extract.paleon.site(model="LPJ-WSL", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                              model.dir=path.wsl, 
                                               vars="Fcomp", yrmin=1830, yrmax=1849)[["Fcomp"]]
   fcomp.wsl[["modern"]]  <- extract.paleon.site(model="LPJ-WSL", 
-                                              model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-WSL/LPJ-WSL.v1", 
+                                              model.dir=path.wsl, 
                                               vars="Fcomp", yrmin=1991, yrmax=2010)[["Fcomp"]]
   
   fcomp.guess <- list()
   fcomp.guess[["spinup"]]  <- extract.paleon.site(model="LPJ-GUESS", 
-                                                model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                                model.dir=path.guess, 
                                                 vars="Fcomp", yrmin= 850, yrmax= 869)[["Fcomp"]]
   fcomp.guess[["pre-ind"]] <- extract.paleon.site(model="LPJ-GUESS", 
-                                                model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                                model.dir=path.guess, 
                                                 vars="Fcomp", yrmin=1830, yrmax=1849)[["Fcomp"]]
   fcomp.guess[["modern"]]  <- extract.paleon.site(model="LPJ-GUESS", 
-                                                model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/LPJ-GUESS/LPJ-GUESS.v1.1", 
+                                                model.dir=path.guess, 
                                                 vars="Fcomp", yrmin=1991, yrmax=2010)[["Fcomp"]]
   
   
   fcomp.ed <- list()
   fcomp.ed[["spinup"]]  <- extract.paleon.site(model="ED2", 
-                                             model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                             model.dir=path.ed, 
                                              vars="Fcomp", yrmin= 850, yrmax= 869)[["Fcomp"]]
   fcomp.ed[["pre-ind"]] <- extract.paleon.site(model="ED2", 
-                                             model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                             model.dir=path.ed, 
                                              vars="Fcomp", yrmin=1830, yrmax=1849)[["Fcomp"]]
   fcomp.ed[["modern"]]  <- extract.paleon.site(model="ED2", 
-                                             model.dir="/Users/crolli/Dropbox/PalEON_CR/PalEON_MIP2_Region/phase2_model_output/ED2/ED2.v1.2016-05-25", 
+                                             model.dir=path.ed, 
                                              vars="Fcomp", yrmin=1991, yrmax=2010)[["Fcomp"]]
   
   # Condensing the different layers down to the means to make graphing easier
@@ -408,13 +414,14 @@ dev.off()
   fcomp.out <- interp.mod(dat.all=fcomp.out, mod.missing="ED2", mod.mask="LPJ-WSL", var.interp="Evg")
   fcomp.out <- interp.mod(dat.all=fcomp.out, mod.missing="ED2", mod.mask="LPJ-WSL", var.interp="Grass")
   fcomp.out$flag <- as.factor(fcomp.out$flag)
+  fcomp.out <- fcomp.out[!is.na(fcomp.out$Decid),]  
   summary(fcomp.out)
   
   png(file.path(path.figs, "Fcomp_Decid.png"), height=8.5, width=11, units="in", res=180)
   ggplot(fcomp.out[complete.cases(fcomp.out),]) +
     facet_grid(Model ~ Time, drop=T) +
     geom_raster(data=fcomp.out[is.na(fcomp.out$flag), ], aes(x=lon, y=lat, fill=Decid)) +
-    geom_raster(data=fcomp.out[complete.cases(fcomp.out) & fcomp.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=Decid), alpha=0.8) +
+    geom_raster(data=fcomp.out[complete.cases(fcomp.out) & fcomp.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=Decid), alpha=0.9) +
     coord_equal(ratio=1) +
     scale_x_continuous(expand=c(0,0)) +
     scale_y_continuous(expand=c(0,0)) +
@@ -426,7 +433,7 @@ dev.off()
   ggplot(fcomp.out[complete.cases(fcomp.out),]) +
     facet_grid(Model ~ Time, drop=T) +
     geom_raster(data=fcomp.out[is.na(fcomp.out$flag), ], aes(x=lon, y=lat, fill=Evg)) +
-    geom_raster(data=fcomp.out[complete.cases(fcomp.out) & fcomp.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=Evg), alpha=0.8) +
+    geom_raster(data=fcomp.out[complete.cases(fcomp.out) & fcomp.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=Evg), alpha=0.9) +
     coord_equal(ratio=1) +
     scale_x_continuous(expand=c(0,0)) +
     scale_y_continuous(expand=c(0,0)) +
@@ -438,13 +445,50 @@ dev.off()
   ggplot(fcomp.out[complete.cases(fcomp.out),]) +
     facet_grid(Model ~ Time, drop=T) +
     geom_raster(data=fcomp.out[is.na(fcomp.out$flag), ], aes(x=lon, y=lat, fill=Grass)) +
-    geom_raster(data=fcomp.out[complete.cases(fcomp.out) & fcomp.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=Grass), alpha=0.8) +
+    geom_raster(data=fcomp.out[complete.cases(fcomp.out) & fcomp.out$flag=="interpolated", ], aes(x=lon, y=lat, fill=Grass), alpha=0.9) +
     coord_equal(ratio=1) +
     scale_x_continuous(expand=c(0,0)) +
     scale_y_continuous(expand=c(0,0)) +
     ggtitle(paste0("Date Created: ", Sys.Date())) +
     theme(panel.background=element_blank())
   dev.off()
+  
+  
+  # To try and do ecosystem type: use fill=rgb(r=Grass, g=Decid, b=Evg)
+  #   fcomp.out[is.na(fcomp.out$Decid),c("Decid", "Grass", "Evg")] <- 0
+  fcomp.out2 <- fcomp.out[!is.na(fcomp.out$Decid),]  
+  fcomp.out2$check <- rowSums(fcomp.out2[,c("Decid", "Evg", "Grass")])
+  fcomp.out2[,c("Decid2", "Evg2", "Grass2")] <- fcomp.out2[,c("Decid", "Evg", "Grass")]/rowSums(fcomp.out2[,c("Decid", "Evg", "Grass")])
+  fcomp.out2$check2 <- rowSums(fcomp.out2[,c("Decid2", "Evg2", "Grass2")])
+  summary(fcomp.out2)
+
+  png(file.path(path.figs, "Fcomp_EcosystemType.png"), height=8.5, width=11, units="in", res=180)
+  ggplot(fcomp.out2[complete.cases(fcomp.out2),]) +
+    facet_grid(Model ~ Time, drop=T) +
+    geom_tile(data=fcomp.out2[fcomp.out2$Model=="LPJ-WSL", ], aes(x=lon, y=lat), 
+              fill=rgb(r=fcomp.out2[fcomp.out2$Model=="LPJ-WSL", "Grass2"], 
+                       g=fcomp.out2[fcomp.out2$Model=="LPJ-WSL", "Decid2"], 
+                       b=fcomp.out2[fcomp.out2$Model=="LPJ-WSL", "Evg2"])) +
+    geom_tile(data=fcomp.out2[fcomp.out2$Model=="LPJ-GUESS", ], aes(x=lon, y=lat), 
+              fill=rgb(r=fcomp.out2[fcomp.out2$Model=="LPJ-GUESS", "Grass2"], 
+                       g=fcomp.out2[fcomp.out2$Model=="LPJ-GUESS", "Decid2"], 
+                       b=fcomp.out2[fcomp.out2$Model=="LPJ-GUESS", "Evg2"])) +
+    geom_tile(data=fcomp.out2[fcomp.out2$Model=="ED2" & is.na(fcomp.out2$flag), ], aes(x=lon, y=lat), 
+              fill=rgb(r=fcomp.out2[fcomp.out2$Model=="ED2" & is.na(fcomp.out2$flag), "Grass2"], 
+                       g=fcomp.out2[fcomp.out2$Model=="ED2" & is.na(fcomp.out2$flag), "Decid2"], 
+                       b=fcomp.out2[fcomp.out2$Model=="ED2" & is.na(fcomp.out2$flag), "Evg2"])) +
+    geom_tile(data=fcomp.out2[complete.cases(fcomp.out2) & fcomp.out2$flag=="interpolated", ], aes(x=lon, y=lat), 
+              fill=rgb(r=fcomp.out2[complete.cases(fcomp.out2) & fcomp.out2$flag=="interpolated", "Grass2"], 
+                       g=fcomp.out2[complete.cases(fcomp.out2) & fcomp.out2$flag=="interpolated", "Decid2"], 
+                       b=fcomp.out2[complete.cases(fcomp.out2) & fcomp.out2$flag=="interpolated", "Evg2"]), alpha=0.9) +
+    coord_equal(ratio=1) +
+    scale_x_continuous(expand=c(0,0)) +
+    scale_y_continuous(expand=c(0,0)) +
+    ggtitle(paste0("Date Created: ", Sys.Date())) +
+    guides(fill= "none") +
+    theme(panel.background=element_blank())
+  dev.off()
+  # geom_tile(data=dat, aes(x=x, y=y, fill=rgb(r,g,b)))
   
   # --------------------------
   # Individual models by PFT
@@ -549,7 +593,7 @@ dev.off()
   ggplot(fcomp.out2[fcomp.out2$Model=="ED2" & fcomp.out2$PFT %in% ed.use & complete.cases(fcomp.out2),]) +
     facet_grid(PFT ~ Time, drop=T) +
     geom_raster(data=fcomp.out2[fcomp.out2$Model=="ED2" & fcomp.out2$PFT %in% ed.use & is.na(fcomp.out2$flag), ], aes(x=lon, y=lat, fill=Fcomp)) +
-    geom_raster(data=fcomp.out2[fcomp.out2$Model=="ED2" & fcomp.out2$PFT %in% ed.use & complete.cases(fcomp.out2) & fcomp.out2$flag=="interpolated", ], aes(x=lon, y=lat, fill=Fcomp), alpha=0.8) +
+    geom_raster(data=fcomp.out2[fcomp.out2$Model=="ED2" & fcomp.out2$PFT %in% ed.use & complete.cases(fcomp.out2) & fcomp.out2$flag=="interpolated", ], aes(x=lon, y=lat, fill=Fcomp), alpha=0.95) +
     coord_equal(ratio=1) +
     scale_x_continuous(expand=c(0,0)) +
     scale_y_continuous(expand=c(0,0)) +
@@ -560,3 +604,4 @@ dev.off()
   
 }
 # -----------------------------
+
